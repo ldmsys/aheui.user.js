@@ -1,9 +1,22 @@
+// ==UserScript==
+// @name         아희 for UserScript
+// @namespace    https://github.com/ldmsys/aheui.user.js
+// @version      0.1
+// @description  아희("밯망희")
+// @author       Original jsaheui: Puzzlet Chung, Did nothing by ldmsys
+// @match        *://*/*
+// @icon         https://avatars.githubusercontent.com/u/1641215?s=200&v=4
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    window.아희 = (code, inbuf, useoutbuf, numbuf) => {
 //상수, constants
-cheossori = new Array("ㄱ", "ㄲ", "ㄴ", "ㄷ", "ㄸ", "ㄹ", "ㅁ", "ㅂ", "ㅃ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ");
-holsori = new Array("ㅏ", "ㅐ", "ㅑ", "ㅒ", "ㅓ", "ㅔ", "ㅕ", "ㅖ", "ㅗ", "ㅘ", "ㅙ", "ㅚ", "ㅛ", "ㅜ", "ㅝ", "ㅞ", "ㅟ", "ㅠ", "ㅡ", "ㅢ", "ㅣ");
-batchim = new Array(" ", "ㄱ", "ㄲ", "ㄳ", "ㄴ", "ㄵ", "ㄶ", "ㄷ", "ㄹ", "ㄺ", "ㄻ", "ㄼ", "ㄽ", "ㄾ", "ㄿ", "ㅀ", "ㅁ", "ㅂ", "ㅄ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ");
-batchim_hoek = new Array(0, 2, 4, 4, 2, 5, 5, 3, 5, 7, 9, 9, 7, 9, 9, 8, 4, 4, 6, 2, 4, 1, 3, 4, 3, 4, 4, 3);
-required_elem = new Array(0, 0, 2, 2, 2, 2, 1, 0, 1, 0, 1, 0, 2, 0, 1, 0, 2, 2, 0);
+var cheossori = new Array("ㄱ", "ㄲ", "ㄴ", "ㄷ", "ㄸ", "ㄹ", "ㅁ", "ㅂ", "ㅃ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ");
+var holsori = new Array("ㅏ", "ㅐ", "ㅑ", "ㅒ", "ㅓ", "ㅔ", "ㅕ", "ㅖ", "ㅗ", "ㅘ", "ㅙ", "ㅚ", "ㅛ", "ㅜ", "ㅝ", "ㅞ", "ㅟ", "ㅠ", "ㅡ", "ㅢ", "ㅣ");
+var batchim = new Array(" ", "ㄱ", "ㄲ", "ㄳ", "ㄴ", "ㄵ", "ㄶ", "ㄷ", "ㄹ", "ㄺ", "ㄻ", "ㄼ", "ㄽ", "ㄾ", "ㄿ", "ㅀ", "ㅁ", "ㅂ", "ㅄ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ");
+var batchim_hoek = new Array(0, 2, 4, 4, 2, 5, 5, 3, 5, 7, 9, 9, 7, 9, 9, 8, 4, 4, 6, 2, 4, 1, 3, 4, 3, 4, 4, 3);
+var required_elem = new Array(0, 0, 2, 2, 2, 2, 1, 0, 1, 0, 1, 0, 2, 0, 1, 0, 2, 2, 0);
 
 //변수, variables
 var code_gonggan = new Array; //codespace
@@ -15,9 +28,13 @@ var y = new Number;
 var dx = new Number;
 var dy = new Number;
 var timer = new Number;
-var debug = new Boolean(true);
 var meomchum = new Boolean(true); //is_stopped
 var input_buffer = new String;
+var output_buffer = new String;
+var number_buffer = new Array;
+
+var msg_input_number = "숫자를 입력하세요. 실행을 멈추려면 !!!를 입력하세요.";
+var msg_input_character = "글자를 입력하세요. 실행을 멈추려면 !!!를 입력하세요.";
 
 //함수, functions
 
@@ -43,40 +60,30 @@ function pop(i){
 }
 
 function output(obj){
-	document.forms[0].output.value += obj;
+	useoutbuf ? (obj == "\n" ? console.log(output_buffer) || (output_buffer = ""): output_buffer += obj): console.log(obj);
 }
 
-function debug_sseo(){ //write debug info
-	str = msg_coordinate + "(" + x + ", " + y + ")" + '\n' + msg_character + code_gonggan[y].charAt(x) + '\n';
-	for(i=0; i<28; i++){
-		if(i == stack_index) str += '>';
-		stack[i].reverse();
-		str += String.fromCharCode(0xc544 + i) + ": " + stack[i] + '\n';
-		stack[i].reverse();
-	}
-	document.forms[0].dumps.value = str;
-}
 
 function chogi(){ //initialize
 	meomchum = true;
 	clearTimeout(timer);
 
-	input_buffer = "";
+	input_buffer = inbuf || "";
 
 	x = 0; dx = 0;
 	y = 0; dx = 0;
-	code_gonggan = document.forms[0].aheui.value.split('\n');
+	code_gonggan = code.split('\n');
 
 	stack_index = 0;
-	for(i=0; i<28; i++) stack[i] = new Array;
+	for(let i=0; i<28; i++) stack[i] = new Array;
 
-	document.forms[0].output.value = "";
-	document.forms[0].dumps.value = "";
+	/*document.forms[0].output.value = "";
+	document.forms[0].dumps.value = "";*/
 }
 
 function cursor_omgyeo(){ //move cursor
 	x+=dx; y+=dy;
-	
+
 	if(y<0) y = code_gonggan.length-1;
 	if(y>=code_gonggan.length) y = 0;
 
@@ -90,9 +97,9 @@ function dan_gye(han_beon){ //step; han_beon means whether it executes a single 
 		if(timer) clearTimeout(timer);
 	}
 
-	code_gonggan = document.forms[0].aheui.value.split('\n');
+	code_gonggan = code.split('\n');
 
-	k = han_beon ? 1 : 100;
+	let k = han_beon ? 1 : 100;
 	while(k-- > 0){
 		if(!han_beon && meomchum) break;
 
@@ -100,12 +107,12 @@ function dan_gye(han_beon){ //step; han_beon means whether it executes a single 
 			cursor_omgyeo();
 			continue;
 		}
-		c = code_gonggan[y].charCodeAt(x);
+		let c = code_gonggan[y].charCodeAt(x);
 		if(c < 0xac00 || c > 0xd7a3){
 			cursor_omgyeo();
 			continue;
 		}
-		ch = haechae(c);
+		let ch = haechae(c);
 
 		switch(ch[1]){
 			case 0:  dx=1;  dy=0;  break; //ㅏ
@@ -133,7 +140,7 @@ function dan_gye(han_beon){ //step; han_beon means whether it executes a single 
 			case 16: //ㅟ
 			default:
 		}
-
+        let a, b;
 		if(stack[stack_index].length < required_elem[ch[0]]){ dx=-dx; dy=-dy; }
 		else switch(ch[0]){
 			case 2:  a = pop(stack_index); b = pop(stack_index); push(stack_index, b/a);          break; //ㄴ
@@ -150,7 +157,7 @@ function dan_gye(han_beon){ //step; han_beon means whether it executes a single 
 			case 7:                                                                                      //ㅂ
 				switch(ch[2]){
 					case 21:
-						k = prompt(msg_input_number);
+						k = number_buffer.splice(0,1)[0] || prompt(msg_input_number);
 						if(k == "!!!"){ meomchum=true; return; }
 						push(stack_index, k);                        break; //ㅇ
 					case 27:
@@ -192,16 +199,20 @@ function dan_gye(han_beon){ //step; han_beon means whether it executes a single 
 			default:
 		}
 
-		if(document.forms[0].debug.checked) debug_sseo();
 		cursor_omgyeo();
 	}
 
-	if(!han_beon && !meomchum) timer = setTimeout('dan_gye(false)', 0);
+	if(!han_beon && !meomchum) timer = setTimeout(() => {dan_gye(false)}, 0);
 }
 
 function silhaeng(){ //execute
+    number_buffer = typeof numbuf == "string" ? numbuf.split(' ') : (numbuf || []); // https://github.com/aheui/aheui.github.io/issues/12
 	chogi();
 
 	meomchum = false;
 	dan_gye(false);
+    if(meomchum && useoutbuf && output_buffer) console.log(output_buffer);
 }
+silhaeng();
+};
+})();
