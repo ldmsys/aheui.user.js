@@ -55,7 +55,8 @@ Hello, world!
 아희("밯망희","뷁");
 ```
 
-비록 자바스크립트 문법과 매개변수로 인하여 밯망희 깎던 노인의 마음을 그대로 전하지는 못하였으나, 전자는 18자, 후자는 14자로서 무려 4자의 감량 효과가 있었습니다. 어째 후자가 바이트수가 더 길다고요? 무시하십시오.
+비록 자바스크립트 문법과 매개변수로 인하여 밯망희 깎던 노인의 마음을 그대로 전하지는 못하였으나, 전자는 18자, 후자는 14자로서 무려 4자의 감량 효과가 있었습니다. 어째 후자가 바이트수가 더 길다고요? 기분 탓입니다. 무시하십시오.
 
 ### 어떻게 설치하나요?
-추가바람
+1. Greasemonkey 호환 유저스크립트 매니저를 설치합니다. (Chrome 기준 [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en) 등)
+1. [이 링크](https://github.com/ldmsys/aheui.user.js/raw/master/jsaheui.user.js)에 접속하여 설치합니다.
